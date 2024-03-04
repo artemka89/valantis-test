@@ -1,8 +1,9 @@
 {
-  "name": "valantis",
+  "name": "valantis-test",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://artemka89.github.io/valantis-test/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
