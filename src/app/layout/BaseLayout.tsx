@@ -1,5 +1,5 @@
 import { Home } from '@/pages/Home';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { RootLayout } from './RootLayout';
 
 export const BaseLayout = () => {
@@ -7,8 +7,8 @@ export const BaseLayout = () => {
     <div className="container h-screen">
       <Routes>
         <Route element={<RootLayout />}>
-          <Route path="/" element={<Navigate to="/products" />} />
-          <Route path="/products" element={<Home />} />
+          {/* <Route path="/" element={<Navigate to="/products" />} /> */}
+          <Route path="/" element={<Home />} />
           <Route path="*" element={<div>Страница отсутсвует.</div>} />
         </Route>
       </Routes>
