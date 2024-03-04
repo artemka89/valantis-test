@@ -1,0 +1,2 @@
+export { SearchProducts } from './SearchProducts';
+
