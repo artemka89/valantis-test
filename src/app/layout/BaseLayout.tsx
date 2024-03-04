@@ -7,8 +7,8 @@ export const BaseLayout = () => {
     <div className="container h-screen">
       <Routes>
         <Route element={<RootLayout />}>
-          <Route path="/" element={<Navigate to="/products" />} />
-          <Route index element={<Home />} />
+          <Route index element={<Navigate to="/valantis-test" />} />
+          <Route path='/valantis-test' element={<Home />} />
           <Route path="/*" element={<div>Страница отсутсвует.</div>} />
         </Route>
       </Routes>
