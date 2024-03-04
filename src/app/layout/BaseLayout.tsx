@@ -8,8 +8,8 @@ export const BaseLayout = () => {
       <Routes>
         <Route element={<RootLayout />}>
           {/* <Route path="/" element={<Navigate to="/products" />} /> */}
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<div>Страница отсутсвует.</div>} />
+          <Route index element={<Home />} />
+          <Route path="/*" element={<div>Страница отсутсвует.</div>} />
         </Route>
       </Routes>
     </div>
