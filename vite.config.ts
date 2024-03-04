@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [   
     react(),
   ],
+  base: '/valantis-test/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
