@@ -50,15 +50,14 @@ export const useGetBrandFields = (field: FILTER_FIELDS | null) => {
   });
 };
 
-export const useGetInfinityPrices = (field: FILTER_FIELDS | null) => {
-  if (field !== FILTER_FIELDS.price) {
-    field = null;
-  }
+export const useGetInfinityPrices = () => {
   return useInfiniteQuery({
     queryKey: [PRODUCT_QUERY_KEYS.prices],
     queryFn: ({ pageParam }) => fetchPrices({ pageParam }),
     initialPageParam: 0,
-    getNextPageParam: (_lastPage, _AllPages, prevPage) => prevPage + 1,
-    enabled: !!field,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {      
+      if (lastPage.length === 0) return null;
+      return lastPageParam + 1;
+    },
   });
 };

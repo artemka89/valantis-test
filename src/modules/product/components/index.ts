@@ -1,5 +1,5 @@
 export { ProductCard } from './ProductCard';
 export { ProductsList } from './ProductList';
 export { ProductsPagination } from './ProductPagination';
-export { SearchProducts } from './searchProducts';
+export { Search } from './search';
 export { Products } from './Products';

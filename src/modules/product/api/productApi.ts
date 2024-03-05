@@ -76,18 +76,9 @@ export const fetchBrandNames = async () => {
   return [...uniqueBrands];
 };
 
-// export const fetchPrices = async () => {
-//   const prices = await fetch<number[], string | number>({
-//     action: ACTION_NAMES.getFields,
-//     params: { field: 'price' },
-//   });
-//   const uniquePrices = new Set(prices.data.result);
-//   return [...uniquePrices];
-// };
-
 export const fetchPrices = async ({ pageParam }: { pageParam: number }) => {
-  const limit = 10;
-  const offset = pageParam * limit * 100;
+  const limit = 50;
+  const offset = pageParam * limit;
   const uniquePrices = await fetchUniquePrices(offset, limit);
   return [...uniquePrices];
 };
@@ -95,13 +86,13 @@ export const fetchPrices = async ({ pageParam }: { pageParam: number }) => {
 async function fetchUniquePrices(
   offset: number,
   limit: number
-): Promise<number[]> {
+): Promise<Set<number>> {
   const pricesRes = await fetch<number[], string | number>({
     action: ACTION_NAMES.getFields,
     params: { field: 'price', offset, limit },
   });
   if (!pricesRes) {
-    return [];
+    return new Set();
   }
   const prices = pricesRes.data.result;
   const uniquePrices = new Set(prices);
@@ -110,5 +101,5 @@ async function fetchUniquePrices(
     const newPrices = await fetchUniquePrices(offset + limit, count);
     newPrices.forEach((price) => uniquePrices.add(price));
   }
-  return [...uniquePrices];
+  return uniquePrices;
 }

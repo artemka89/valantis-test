@@ -5,10 +5,21 @@ export enum ACTION_NAMES {
   filter= 'filter'
 }
 
+export enum PARAM_NAMES {
+  offset = 'offset',
+  limit = 'limit',
+  field = 'field',
+  ids = 'ids',
+  product= 'product',
+  price = 'price',
+  brand = 'brand'
+  
+}
+
 export interface BodyType<T> {
   action: ACTION_NAMES;
   params: {
-    [key: string]: T;
-  };
+    [key in PARAM_NAMES]?: T;
+  };  
 }
  

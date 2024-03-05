@@ -1,10 +1,12 @@
 import { FC, useEffect, useState } from 'react';
 import { useGetProducts, useGetSearchingProducts } from '../api';
-import { useDebounce } from '@/shared/hooks';
 import { FILTER_FIELDS } from '../constants';
-import { ProductsList, ProductsPagination, SearchProducts } from '.';
+import { ProductsList, ProductsPagination } from '.';
+import { Search } from './search';
 import { Loader } from '@/shared/ui/icons/Loader';
 import { config } from '@/shared/lib/config';
+
+
 
 export const Products: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,30 +24,19 @@ export const Products: FC = () => {
     adjustOffset,
   });
 
-  const debouncedSearch = useDebounce(searchValue, 500);
   const {
     data: foundProducts,
     isSuccess: foundProductsIsSuccess,
     isPending: foundProductsIsLoading,
-  } = useGetSearchingProducts(debouncedSearch, filterField);
+  } = useGetSearchingProducts(searchValue, filterField);
 
   const foundProductsSlised = foundProducts?.slice(
     (currentPageNumber - 1) * config.PAGE_SIZE,
     currentPageNumber * config.PAGE_SIZE
-  );
-
-  const getLastPage = () => {
-    if (!searchValue) {
-      return products?.data ? products?.data.length < config.PAGE_SIZE : false;
-    } else {
-      return foundProductsSlised
-        ? foundProductsSlised?.length < config.PAGE_SIZE
-        : false;
-    }
-  };
+  );  
 
   const displayedProducts = searchValue
-    ? { items: foundProducts, isLoading: foundProductsIsLoading }
+    ? { items: foundProductsSlised, isLoading: foundProductsIsLoading }
     : { items: products?.data, isLoading: productsIsLoading };
 
   useEffect(() => {
@@ -63,9 +54,19 @@ export const Products: FC = () => {
     if (productsIsSuccess || foundProductsIsSuccess) setIsLoading(false);
   }, [productsIsSuccess, foundProductsIsSuccess]);
 
+  const getLastPage = () => {
+    if (!searchValue) {
+      return products?.data ? products?.data.length < config.PAGE_SIZE : false;
+    } else {
+      return foundProductsSlised
+        ? foundProductsSlised?.length < config.PAGE_SIZE
+        : false;
+    }
+  };
+
   return (
     <section className="mb-6">
-      <SearchProducts
+      <Search
         setSearchValue={setSearchValue}
         field={filterField}
         setField={setFilterField}

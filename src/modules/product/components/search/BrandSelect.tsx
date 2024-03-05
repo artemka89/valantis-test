@@ -11,7 +11,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FILTER_FIELDS } from '../../constants';
 
-type BrandSelecProps = {
+type BrandSelectProps = {
   brands: string[];
   isLoading: boolean;
   onSearch: (value: string) => void;
@@ -20,7 +20,7 @@ type BrandSelecProps = {
     searchQueryParam: string;
   };
 };
-export const BrandSelect: FC<BrandSelecProps> = ({
+export const BrandSelect: FC<BrandSelectProps> = ({
   brands,
   isLoading,
   onSearch,

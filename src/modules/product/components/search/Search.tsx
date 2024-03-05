@@ -11,18 +11,15 @@ import { FILTER_FIELDS } from '../../constants';
 import { ProductNameInput } from './ProductNameInput';
 import { PriceSelect } from './PriceSelect';
 import { BrandSelect } from './BrandSelect';
-import {
-  useGetBrandFields,
-  useGetInfinityPrices,
-} from '../../api/productQueries';
+import { useGetBrandFields } from '../../api/productQueries';
 
-type SearchProductsProps = {
+type SearchProps = {
   field: FILTER_FIELDS;
   setField: (value: FILTER_FIELDS) => void;
   setSearchValue: (value: string) => void;
 };
 
-export const SearchProducts: FC<SearchProductsProps> = ({
+export const Search: FC<SearchProps> = ({
   field,
   setField,
   setSearchValue,
@@ -32,11 +29,6 @@ export const SearchProducts: FC<SearchProductsProps> = ({
   const currentField = searchParams.get('field') || '';
 
   const { data: brands, isPending: isLoadingBrands } = useGetBrandFields(field);
-  const {
-    data: pricePages,
-    isFetchingNextPage: isLoadingPrices,
-    fetchNextPage,
-  } = useGetInfinityPrices(field);
 
   useEffect(() => {
     if (currentSearch) {
@@ -46,7 +38,7 @@ export const SearchProducts: FC<SearchProductsProps> = ({
     setField((fieldQueryParam as FILTER_FIELDS) || field);
     setSearchValue(searchQueryParam || '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+  }, []);
 
   const getSearchQueryParams = () => {
     const fieldQueryParam = searchParams.get('field');
@@ -55,13 +47,6 @@ export const SearchProducts: FC<SearchProductsProps> = ({
       return { fieldQueryParam, searchQueryParam };
     }
     return { fieldQueryParam: '', searchQueryParam: '' };
-  };
-
-  const isLastPricePage = () => {
-    if (pricePages?.pages[pricePages?.pages.length - 1].length === 0) {
-      return true;
-    }
-    return false;
   };
 
   const onSearch = (value: string) => {
@@ -108,15 +93,7 @@ export const SearchProducts: FC<SearchProductsProps> = ({
           getSearchQueryParams={getSearchQueryParams}
         />
       )}
-      {field === FILTER_FIELDS.price && pricePages && (
-        <PriceSelect
-          pricePages={pricePages}
-          fetchNextPage={fetchNextPage}
-          onSearch={onSearch}
-          isLoading={isLoadingPrices}
-          isLastPage={isLastPricePage}
-        />
-      )}
+      {field === FILTER_FIELDS.price && <PriceSelect onSearch={onSearch} />}
     </div>
   );
 };
