@@ -1,12 +1,10 @@
 import { FC, useEffect, useState } from 'react';
-import { useGetProducts, useGetSearchingProducts } from '../api';
+import { useGetProducts, useGetFilteredProducts } from '../api';
+import { config } from '@/shared/lib/config';
 import { FILTER_FIELDS } from '../constants';
 import { ProductsList, ProductsPagination } from '.';
 import { Search } from './search';
 import { Loader } from '@/shared/ui/icons/Loader';
-import { config } from '@/shared/lib/config';
-
-
 
 export const Products: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,18 +23,18 @@ export const Products: FC = () => {
   });
 
   const {
-    data: foundProducts,
-    isSuccess: foundProductsIsSuccess,
-    isPending: foundProductsIsLoading,
-  } = useGetSearchingProducts(searchValue, filterField);
+    data: filteredProducts,
+    isSuccess: filteredProductsIsSuccess,
+    isPending: filteredProductsIsLoading,
+  } = useGetFilteredProducts(searchValue, filterField);
 
-  const foundProductsSlised = foundProducts?.slice(
+  const filteredProductsSlised = filteredProducts?.slice(
     (currentPageNumber - 1) * config.PAGE_SIZE,
     currentPageNumber * config.PAGE_SIZE
   );  
 
   const displayedProducts = searchValue
-    ? { items: foundProductsSlised, isLoading: foundProductsIsLoading }
+    ? { items: filteredProductsSlised, isLoading: filteredProductsIsLoading }
     : { items: products?.data, isLoading: productsIsLoading };
 
   useEffect(() => {
@@ -51,15 +49,15 @@ export const Products: FC = () => {
   }, [searchValue]);
 
   useEffect(() => {
-    if (productsIsSuccess || foundProductsIsSuccess) setIsLoading(false);
-  }, [productsIsSuccess, foundProductsIsSuccess]);
+    if (productsIsSuccess || filteredProductsIsSuccess) setIsLoading(false);
+  }, [productsIsSuccess, filteredProductsIsSuccess]);
 
   const getLastPage = () => {
     if (!searchValue) {
       return products?.data ? products?.data.length < config.PAGE_SIZE : false;
     } else {
-      return foundProductsSlised
-        ? foundProductsSlised?.length < config.PAGE_SIZE
+      return filteredProductsSlised
+        ? filteredProductsSlised?.length < config.PAGE_SIZE
         : false;
     }
   };
@@ -85,7 +83,7 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : foundProductsIsLoading
+              !searchValue ? productsIsLoading : filteredProductsIsLoading
             }
             visible={displayedProducts?.items?.length !== 0}
           />
@@ -98,7 +96,7 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : foundProductsIsLoading
+              !searchValue ? productsIsLoading : filteredProductsIsLoading
             }
             visible={displayedProducts?.items?.length !== 0}
           />

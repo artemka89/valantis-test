@@ -1,3 +1,7 @@
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useGetBrands } from '../../api';
+import { X } from 'lucide-react';
 import { Loader } from '@/shared/ui/icons/Loader';
 import {
   Select,
@@ -6,49 +10,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select';
-import { X } from 'lucide-react';
-import { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FILTER_FIELDS } from '../../constants';
+
 
 type BrandSelectProps = {
-  brands: string[];
-  isLoading: boolean;
   onSearch: (value: string) => void;
-  getSearchQueryParams: () => {
-    fieldQueryParam: string;
-    searchQueryParam: string;
-  };
 };
-export const BrandSelect: FC<BrandSelectProps> = ({
-  brands,
-  isLoading,
-  onSearch,
-  getSearchQueryParams,
-}) => {
-  const [inputValue, setInputValue] = useState('');
+
+export const BrandSelect: FC<BrandSelectProps> = ({ onSearch }) => {
+  const [selectValue, setSelectValue] = useState('');
 
   const navigate = useNavigate();
 
-  const { fieldQueryParam, searchQueryParam } = getSearchQueryParams();
+  const { data, status } = useGetBrands();
 
-  useEffect(() => {
-    if (searchQueryParam && fieldQueryParam === FILTER_FIELDS.brand) {
-      setInputValue(searchQueryParam);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onChangeBrand = (brand: string) => {
-    if (searchQueryParam) {
-      setInputValue(searchQueryParam);
-    }
-    setInputValue(brand);
-    onSearch(brand);
+  const onChangeBrand = (value: string) => {
+    setSelectValue(value);
+    onSearch(value);
   };
 
   const clearBrandValue = () => {
-    setInputValue('');
+    setSelectValue('');
     navigate('/');
   };
 
@@ -59,10 +40,10 @@ export const BrandSelect: FC<BrandSelectProps> = ({
           <SelectValue placeholder="выберите бренд" />
         </SelectTrigger>
         <SelectContent>
-          {isLoading ? (
+          {status === 'pending' ? (
             <Loader />
           ) : (
-            brands?.map((brand) => (
+            data?.map((brand) => (
               <SelectItem value={brand} key={brand}>
                 {brand}
               </SelectItem>
@@ -70,7 +51,7 @@ export const BrandSelect: FC<BrandSelectProps> = ({
           )}
         </SelectContent>
       </Select>
-      {inputValue && (
+      {selectValue && (
         <X
           onClick={clearBrandValue}
           className={`absolute right-6 top-3 h-5 w-5 cursor-pointer text-neutral-500`}

@@ -9,3 +9,5 @@ export const config = {
   API_AUTH_KEY: hash,
   PAGE_SIZE: 50,
 };
+
+export const ROOT_PATH = import.meta.env.BASE_URL

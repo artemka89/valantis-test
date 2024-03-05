@@ -1,2 +1,2 @@
-export { fetchFilteredProducts, fetchProducts } from './productApi';
-export { useGetProducts, useGetSearchingProducts } from './productQueries';
+export { fetchFilteredProducts, fetchProducts, fetchBrands, fetchPrices  } from './productApi';
+export { useGetProducts, useGetFilteredProducts, useGetBrands, useGetInfinityPrices } from './productQueries';

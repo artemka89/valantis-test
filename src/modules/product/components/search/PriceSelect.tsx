@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useGetInfinityPrices } from '../../api/productQueries';
+import { useGetInfinityPrices } from '../../api';
 import { cn } from '@/shared/lib/cn';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Loader } from '@/shared/ui/icons/Loader';
@@ -24,7 +24,9 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
     useGetInfinityPrices();
 
   const uniquePrices = new Set<number>();
-  data?.pages.forEach((page) => page.forEach((price) => uniquePrices.add(price)));
+  data?.pages.forEach((page) =>
+    page.forEach((price) => uniquePrices.add(price))
+  );
 
   useEffect(() => {
     if (inView && hasNextPage) fetchNextPage();
@@ -47,7 +49,9 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
             className="w-[200px] justify-between"
           >
             {selectValue
-              ? [...uniquePrices].find((price) => price.toString() === selectValue)
+              ? [...uniquePrices].find(
+                  (price) => price.toString() === selectValue
+                )
               : 'Выберите цену...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -78,17 +82,19 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
                   {price}
                 </CommandItem>
               ))}
-              <div
-                className=" flex h-8 items-center  justify-center gap-2"
-                ref={ref}
-              >
-                {(status === 'pending' || isFetchingNextPage) && (
-                  <>
-                    <Loader stroke="orange" />
-                    Загрузка...
-                  </>
-                )}
-              </div>
+              {hasNextPage && (
+                <div
+                  className=" flex h-8 items-center  justify-center gap-2"
+                  ref={ref}
+                >
+                  {(status === 'pending' || isFetchingNextPage) && (
+                    <>
+                      <Loader stroke="orange" />
+                      Загрузка...
+                    </>
+                  )}
+                </div>
+              )}
             </CommandGroup>
           </Command>
         </PopoverContent>

@@ -64,7 +64,7 @@ export const fetchFilteredProducts = async <T>(params: {
   return uniqProductRes;
 };
 
-export const fetchBrandNames = async () => {
+export const fetchBrands = async () => {
   const brands = await fetch<string[], string>({
     action: ACTION_NAMES.getFields,
     params: { field: 'brand' },
@@ -77,7 +77,7 @@ export const fetchBrandNames = async () => {
 };
 
 export const fetchPrices = async ({ pageParam }: { pageParam: number }) => {
-  const limit = 50;
+  const limit = 667;
   const offset = pageParam * limit;
   const uniquePrices = await fetchUniquePrices(offset, limit);
   return [...uniquePrices];

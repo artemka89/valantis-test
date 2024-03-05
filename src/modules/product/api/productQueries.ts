@@ -1,11 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { FILTER_FIELDS, PRODUCT_QUERY_KEYS } from '../constants';
-import {
-  fetchBrandNames,
-  fetchFilteredProducts,
-  fetchPrices,
-  fetchProducts,
-} from './productApi';
+import { fetchProducts, fetchFilteredProducts, fetchPrices, fetchBrands } from '.';
 
 export const useGetProducts = ({
   pageNumber,
@@ -21,7 +16,7 @@ export const useGetProducts = ({
   });
 };
 
-export const useGetSearchingProducts = (value: string, field: string) => {
+export const useGetFilteredProducts = (value: string, field: string) => {
   let filterParams = {};
   if (field === FILTER_FIELDS.price) {
     filterParams = { [FILTER_FIELDS.price]: Number(value) };
@@ -33,20 +28,16 @@ export const useGetSearchingProducts = (value: string, field: string) => {
     filterParams = { [FILTER_FIELDS.product]: value };
   }
   return useQuery({
-    queryKey: [PRODUCT_QUERY_KEYS.foundProducts, value],
+    queryKey: [PRODUCT_QUERY_KEYS.filteredProducts, value],
     queryFn: () => fetchFilteredProducts<string | number>(filterParams),
     enabled: !!value,
   });
 };
 
-export const useGetBrandFields = (field: FILTER_FIELDS | null) => {
-  if (field !== FILTER_FIELDS.brand) {
-    field = null;
-  }
+export const useGetBrands = () => {
   return useQuery({
-    queryKey: [PRODUCT_QUERY_KEYS.brandFields, field],
-    queryFn: fetchBrandNames,
-    enabled: !!field,
+    queryKey: [PRODUCT_QUERY_KEYS.brandFields],
+    queryFn: fetchBrands,
   });
 };
 
@@ -55,7 +46,7 @@ export const useGetInfinityPrices = () => {
     queryKey: [PRODUCT_QUERY_KEYS.prices],
     queryFn: ({ pageParam }) => fetchPrices({ pageParam }),
     initialPageParam: 0,
-    getNextPageParam: (lastPage, _allPages, lastPageParam) => {      
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (lastPage.length === 0) return null;
       return lastPageParam + 1;
     },
