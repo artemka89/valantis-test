@@ -10,8 +10,8 @@ export const BaseLayout = () => {
     <div className="container h-screen">
       <Routes>
         <Route element={<RootLayout />}>
-          <Route element={<Navigate to={`${ROOT_PATH}products`} />} />
-          <Route path={`${ROOT_PATH}products`}element={<Home />} />
+          <Route element={<Navigate to={`${ROOT_PATH}`} />} />
+          <Route path={`${ROOT_PATH}`}element={<Home />} />
           <Route path="/*" element={<div>Страница отсутсвует.</div>} />
         </Route>
       </Routes>
