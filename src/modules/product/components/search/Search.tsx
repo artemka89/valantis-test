@@ -23,7 +23,7 @@ export const Search: FC<SearchProps> = ({
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
-
+  searchParams
   const onSearch = (value: string) => {
     setSearchValue(value);
     if (value) {
