@@ -1,10 +1,8 @@
 import { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../model/types';
 import { ProductCard } from './ProductCard';
-import { Loader } from '@/shared/ui/icons/Loader';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/shared/ui/button';
-
+import { Button, Loader } from '@/shared/ui';
 
 type ProductsListProps = {
   products: IProduct[] | undefined;
@@ -15,9 +13,8 @@ export const ProductsList: FC<ProductsListProps> = ({
   products,
   isLoading,
 }) => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-  
   if (isLoading)
     return (
       <div className="flex items-center justify-center gap-2">
@@ -28,7 +25,7 @@ export const ProductsList: FC<ProductsListProps> = ({
 
   if (products?.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center gap-2 text-2xl mt-24">
+      <div className="mt-24 flex flex-col items-center justify-center gap-2 text-2xl">
         Товары отсутствуют
         <Button onClick={() => navigate(-1)}>Назад</Button>
       </div>

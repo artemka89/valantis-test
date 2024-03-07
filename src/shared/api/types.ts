@@ -2,7 +2,7 @@ export enum ACTION_NAMES {
   getIds = 'get_ids',
   getItems = 'get_items',
   getFields = 'get_fields',
-  filter= 'filter'
+  filter = 'filter',
 }
 
 export enum PARAM_NAMES {
@@ -10,16 +10,14 @@ export enum PARAM_NAMES {
   limit = 'limit',
   field = 'field',
   ids = 'ids',
-  product= 'product',
+  product = 'product',
   price = 'price',
-  brand = 'brand'
-  
+  brand = 'brand',
 }
 
 export interface BodyType<T> {
   action: ACTION_NAMES;
   params: {
     [key in PARAM_NAMES]?: T;
-  };  
+  };
 }
- 

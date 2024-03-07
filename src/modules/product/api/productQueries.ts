@@ -1,6 +1,11 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { FILTER_FIELDS, PRODUCT_QUERY_KEYS } from '../constants';
-import { fetchProducts, fetchFilteredProducts, fetchPrices, fetchBrands } from '.';
+import {
+  fetchProducts,
+  fetchFilteredProducts,
+  fetchPrices,
+  fetchBrands,
+} from '.';
 
 export const useGetProducts = ({
   pageNumber,

@@ -2,7 +2,7 @@ import { md5 } from 'js-md5';
 
 const date = new Date();
 const timestamp = date.toISOString().slice(0, 10).replace(/[\D]/g, '');
-const hash = md5(`${import.meta.env.VITE_QUERY_PASSWORD}_${timestamp}`)
+const hash = md5(`${import.meta.env.VITE_QUERY_PASSWORD}_${timestamp}`);
 
 export const config = {
   API_ENDPOINT: import.meta.env.VITE_ENDPOINT,
@@ -10,4 +10,4 @@ export const config = {
   PAGE_SIZE: 50,
 };
 
-export const ROOT_PATH = import.meta.env.BASE_URL
+export const ROOT_PATH = import.meta.env.BASE_URL;

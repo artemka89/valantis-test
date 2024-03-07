@@ -1,17 +1,22 @@
 import { FC, useEffect, useState } from 'react';
 import { useGetProducts, useGetFilteredProducts } from '../api';
 import { config } from '@/shared/lib/config';
-import { FILTER_FIELDS } from '../constants';
+import { useProductContext } from '../hooks/useProductContext';
 import { ProductsList, ProductsPagination } from '.';
 import { Search } from './search';
-import { Loader } from '@/shared/ui/icons/Loader';
+import { Loader } from '@/shared/ui';
 
 export const Products: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPageNumber, setCurrentPageNumber] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [filterField, setFilterField] = useState(FILTER_FIELDS.product);
-  const [adjustOffset, setAdjustOffset] = useState(0);
+
+  const {
+    currentPageNumber,
+    setCurrentPageNumber,
+    searchValue,
+    filterField,
+    adjustOffset,
+    setAdjustOffset,
+  } = useProductContext();
 
   const {
     data: products,
@@ -31,11 +36,15 @@ export const Products: FC = () => {
   const filteredProductsSlised = filteredProducts?.slice(
     (currentPageNumber - 1) * config.PAGE_SIZE,
     currentPageNumber * config.PAGE_SIZE
-  );  
+  );
 
   const displayedProducts = searchValue
     ? { items: filteredProductsSlised, isLoading: filteredProductsIsLoading }
     : { items: products?.data, isLoading: productsIsLoading };
+
+  useEffect(() => {
+    if (productsIsSuccess || filteredProductsIsSuccess) setIsLoading(false);
+  }, [productsIsSuccess, filteredProductsIsSuccess]);
 
   useEffect(() => {
     const adjustOffset = products?.newOffset;
@@ -46,11 +55,8 @@ export const Products: FC = () => {
 
   useEffect(() => {
     setCurrentPageNumber(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
-
-  useEffect(() => {
-    if (productsIsSuccess || filteredProductsIsSuccess) setIsLoading(false);
-  }, [productsIsSuccess, filteredProductsIsSuccess]);
 
   const getLastPage = () => {
     if (!searchValue) {
@@ -64,11 +70,7 @@ export const Products: FC = () => {
 
   return (
     <section className="mb-6">
-      <Search
-        setSearchValue={setSearchValue}
-        field={filterField}
-        setField={setFilterField}
-      />
+      <Search />
       {isLoading ? (
         <div className="flex items-center justify-center">
           <div className="flex items-center  gap-2">

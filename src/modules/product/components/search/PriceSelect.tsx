@@ -1,12 +1,20 @@
 import { FC, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
+import { FILTER_FIELDS } from '../../constants';
 import { useGetInfinityPrices } from '../../api';
 import { cn } from '@/shared/lib/cn';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { Loader } from '@/shared/ui/icons/Loader';
-import { Command, CommandGroup, CommandItem } from '@/shared/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
-import { Button } from '@/shared/ui/button';
+import {
+  Button,
+  Command,
+  CommandGroup,
+  CommandItem,
+  Loader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/shared/ui';
 
 type PriceInputProps = {
   onSearch: (value: string) => void;
@@ -15,6 +23,10 @@ type PriceInputProps = {
 export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
   const [selectValue, setSelectValue] = useState('');
   const [open, setOpen] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const searchFieldValue = searchParams.get('field');
+  const searchParamValue = searchParams.get('search');
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -27,6 +39,13 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
   data?.pages.forEach((page) =>
     page.forEach((price) => uniquePrices.add(price))
   );
+
+  useEffect(() => {
+    if (searchParamValue && searchFieldValue === FILTER_FIELDS.price) {
+      setSelectValue(searchParamValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (inView && hasNextPage) fetchNextPage();

@@ -1,16 +1,16 @@
-import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FC, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetBrands } from '../../api';
+import { FILTER_FIELDS } from '../../constants';
 import { X } from 'lucide-react';
-import { Loader } from '@/shared/ui/icons/Loader';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/ui/select';
-
+  Loader,
+} from '@/shared/ui';
 
 type BrandSelectProps = {
   onSearch: (value: string) => void;
@@ -19,9 +19,21 @@ type BrandSelectProps = {
 export const BrandSelect: FC<BrandSelectProps> = ({ onSearch }) => {
   const [selectValue, setSelectValue] = useState('');
 
+  const [searchParams] = useSearchParams();
+  const searchFieldValue = searchParams.get('field');
+  const searchParamValue = searchParams.get('search');
+
   const navigate = useNavigate();
 
   const { data, status } = useGetBrands();
+
+  useEffect(() => {
+    if (searchParamValue && searchFieldValue === FILTER_FIELDS.brand) {
+      setSelectValue(searchParamValue);
+      console.log(selectValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChangeBrand = (value: string) => {
     setSelectValue(value);
@@ -35,7 +47,10 @@ export const BrandSelect: FC<BrandSelectProps> = ({ onSearch }) => {
 
   return (
     <div className="relative">
-      <Select onValueChange={onChangeBrand}>
+      <Select
+        defaultValue={searchParamValue ? searchParamValue : undefined}
+        onValueChange={onChangeBrand}
+      >
         <SelectTrigger className="w-[270px] border px-2 text-base font-medium text-neutral-500">
           <SelectValue placeholder="выберите бренд" />
         </SelectTrigger>

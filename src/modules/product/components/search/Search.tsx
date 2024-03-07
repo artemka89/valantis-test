@@ -1,46 +1,53 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BrandSelect, PriceSelect, ProductNameInput } from '.';
+import { useProductContext } from '../../hooks/useProductContext';
+import { FILTER_FIELDS } from '../../constants';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/ui/select';
-import { FILTER_FIELDS } from '../../constants';
+} from '@/shared/ui';
 
-type SearchProps = {
-  field: FILTER_FIELDS;
-  setField: (value: FILTER_FIELDS) => void;
-  setSearchValue: (value: string) => void;
-};
+export const Search: FC = () => {
+  const { searchValue, setSearchValue, filterField, setFilterField } =
+    useProductContext();
 
-export const Search: FC<SearchProps> = ({
-  field,
-  setField,
-  setSearchValue,
-}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
-  searchParams
+  const searchParamValue = searchParams.get('search');
+  const fieldParamValue = searchParams.get('field');
+
+  useEffect(() => {
+    if (searchParamValue && fieldParamValue) {
+      setSearchValue(searchParamValue);
+      setFilterField(fieldParamValue as FILTER_FIELDS);
+      console.log(fieldParamValue);
+      console.log(searchValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onSearch = (value: string) => {
     setSearchValue(value);
     if (value) {
-      setSearchParams({ field, search: value });
+      setSearchParams({ field: filterField, search: value });
     } else setSearchParams('');
   };
 
   const onChangeField = (e: FILTER_FIELDS) => {
-    setField(e);
+    setFilterField(e);
     setSearchValue('');
-    setSearchParams('');
   };
 
   return (
     <div className="flex items-center gap-2 py-4">
       <span className="text-base font-medium">Поиск по:</span>
-      <Select defaultValue={field} onValueChange={onChangeField}>
+      <Select
+        defaultValue={fieldParamValue ?? filterField}
+        onValueChange={onChangeField}
+      >
         <SelectTrigger className="w-[95px] text-base font-medium text-orange-600">
           <SelectValue />
         </SelectTrigger>
@@ -51,11 +58,15 @@ export const Search: FC<SearchProps> = ({
         </SelectContent>
       </Select>
 
-      {field === FILTER_FIELDS.brand && <BrandSelect onSearch={onSearch} />}
-      {field === FILTER_FIELDS.product && (
+      {filterField === FILTER_FIELDS.brand && (
+        <BrandSelect onSearch={onSearch} />
+      )}
+      {filterField === FILTER_FIELDS.product && (
         <ProductNameInput onSearch={onSearch} />
       )}
-      {field === FILTER_FIELDS.price && <PriceSelect onSearch={onSearch} />}
+      {filterField === FILTER_FIELDS.price && (
+        <PriceSelect onSearch={onSearch} />
+      )}
     </div>
   );
 };

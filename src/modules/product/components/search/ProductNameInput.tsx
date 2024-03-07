@@ -1,8 +1,8 @@
-import { ChangeEvent, FC, useState, KeyboardEvent } from 'react';
-import { Input } from '@/shared/ui/input';
+import { ChangeEvent, FC, useState, KeyboardEvent, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { FILTER_FIELDS } from '../../constants';
 import { X, Search } from 'lucide-react';
-
-import { Button } from '@/shared/ui/button';
+import { Button, Input } from '@/shared/ui';
 
 type ProductNameInputType = {
   onSearch: (value: string) => void;
@@ -10,6 +10,17 @@ type ProductNameInputType = {
 
 export const ProductNameInput: FC<ProductNameInputType> = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState('');
+
+  const [searchParams] = useSearchParams();
+  const searchFieldValue = searchParams.get('field');
+  const searchParamValue = searchParams.get('search');
+
+  useEffect(() => {
+    if (searchParamValue && searchFieldValue === FILTER_FIELDS.product) {
+      setInputValue(searchParamValue);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
