@@ -46,3 +46,4 @@ export {
   SelectValue,
 } from './select';
 export { Loader } from './icons/Loader';
+export { Skeleton } from './skeleton';

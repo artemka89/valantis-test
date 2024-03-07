@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useGetProducts, useGetFilteredProducts } from '../api';
-import { config } from '@/shared/lib/config';
+import { config } from '@/shared/lib';
 import { useProductContext } from '../hooks/useProductContext';
 import { ProductsList, ProductsPagination } from '.';
 import { Search } from './search';

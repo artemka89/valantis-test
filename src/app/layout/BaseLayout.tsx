@@ -1,7 +1,7 @@
 import { Home } from '@/pages/Home';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RootLayout } from './RootLayout';
-import { ROOT_PATH } from '@/shared/lib/config';
+import { ROOT_PATH } from '@/shared/lib';
 
 export const BaseLayout = () => {
   return (
