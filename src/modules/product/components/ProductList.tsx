@@ -1,8 +1,6 @@
 import { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../model/types';
 import { ProductCard } from './ProductCard/ProductCard';
-import { Button } from '@/shared/ui';
 import { SkeletonCard } from './ProductCard/SkeletonCard';
 
 type ProductsListProps = {
@@ -14,13 +12,11 @@ export const ProductsList: FC<ProductsListProps> = ({
   products,
   isLoading,
 }) => {
-  const navigate = useNavigate();
 
   if (products?.length === 0)
     return (
       <div className="mt-24 flex flex-col items-center justify-center gap-2 text-2xl">
-        Товары отсутствуют
-        <Button onClick={() => navigate(-1)}>Назад</Button>
+        Товары отсутствуют       
       </div>
     );
 

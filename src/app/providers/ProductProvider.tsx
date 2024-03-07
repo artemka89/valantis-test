@@ -12,7 +12,7 @@ export const ProductProvider = ({
   const [filterField, setFilterField] = useState(FILTER_FIELDS.product);
   const [adjustOffset, setAdjustOffset] = useState(0);
 
-  const value = {
+ const value = {
     currentPageNumber,
     setCurrentPageNumber,
     searchValue,
