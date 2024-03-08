@@ -36,6 +36,7 @@ export const Search: FC = () => {
   const onChangeFilterField = (field: FILTER_FIELDS) => {
     setFilterField(field);
     setSearchValue('');
+    setSearchParams(''); 
   };
 
   return (
