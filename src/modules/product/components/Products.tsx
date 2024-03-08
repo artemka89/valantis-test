@@ -1,52 +1,47 @@
 import { FC, useEffect, useState } from 'react';
-import { useGetProducts, useGetSearchingProducts } from '../api';
-import { useDebounce } from '@/shared/hooks';
-import { FILTER_FIELDS } from '../constants';
-import { ProductsList, ProductsPagination, SearchProducts } from '.';
-import { Loader } from '@/shared/ui/icons/Loader';
-import { config } from '@/shared/lib/config';
+import { useGetProducts, useGetFilteredProducts } from '../api';
+import { config } from '@/shared/lib';
+import { useProductContext } from '../hooks/useProductContext';
+import { ProductsList, ProductsPagination } from '.';
+import { Search } from './search';
+import { Loader } from '@/shared/ui';
 
 export const Products: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPageNumber, setCurrentPageNumber] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [filterField, setFilterField] = useState(FILTER_FIELDS.product);
-  const [adjustOffset, setAdjustOffset] = useState(0);
-
+  
   const {
-    data: products,
-    isSuccess: productsIsSuccess,
-    isPending: productsIsLoading,
-  } = useGetProducts({
-    pageNumber: !searchValue ? currentPageNumber : undefined,
+    currentPageNumber,
+    setCurrentPageNumber,
+    searchValue,
+    filterField,
+    adjustOffset,
+    setAdjustOffset,
+  } = useProductContext();
+
+  const { data: products, status: statusProducts } = useGetProducts({
+    pageNumber: !searchValue ? currentPageNumber : null,
     adjustOffset,
   });
 
-  const debouncedSearch = useDebounce(searchValue, 500);
-  const {
-    data: foundProducts,
-    isSuccess: foundProductsIsSuccess,
-    isPending: foundProductsIsLoading,
-  } = useGetSearchingProducts(debouncedSearch, filterField);
+  const { data: filteredProducts, status: statusFilteredProducts } =
+    useGetFilteredProducts(searchValue, filterField);
 
-  const foundProductsSlised = foundProducts?.slice(
+  const filteredProductsSlised = filteredProducts?.slice(
     (currentPageNumber - 1) * config.PAGE_SIZE,
     currentPageNumber * config.PAGE_SIZE
   );
 
-  const getLastPage = () => {
-    if (!searchValue) {
-      return products?.data ? products?.data.length < config.PAGE_SIZE : false;
-    } else {
-      return foundProductsSlised
-        ? foundProductsSlised?.length < config.PAGE_SIZE
-        : false;
-    }
-  };
-
   const displayedProducts = searchValue
-    ? { items: foundProducts, isLoading: foundProductsIsLoading }
-    : { items: products?.data, isLoading: productsIsLoading };
+    ? {
+        items: filteredProductsSlised,
+        isLoading: statusFilteredProducts === 'pending',
+      }
+    : { items: products?.data, isLoading: statusProducts === 'pending' };
+
+  useEffect(() => {
+    if (statusProducts === 'success' || statusFilteredProducts === 'success')
+      setIsLoading(false);
+  }, [statusProducts, statusFilteredProducts]);
 
   useEffect(() => {
     const adjustOffset = products?.newOffset;
@@ -57,22 +52,25 @@ export const Products: FC = () => {
 
   useEffect(() => {
     setCurrentPageNumber(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
-  useEffect(() => {
-    if (productsIsSuccess || foundProductsIsSuccess) setIsLoading(false);
-  }, [productsIsSuccess, foundProductsIsSuccess]);
+  const getLastPage = () => {
+    if (!searchValue) {
+      return products?.data ? products?.data.length < config.PAGE_SIZE : false;
+    } else {
+      return filteredProductsSlised
+        ? filteredProductsSlised?.length < config.PAGE_SIZE
+        : false;
+    }
+  };
 
   return (
     <section className="mb-6">
-      <SearchProducts
-        setSearchValue={setSearchValue}
-        field={filterField}
-        setField={setFilterField}
-      />
+      <Search />
       {isLoading ? (
-        <div className="flex items-center justify-center">
-          <div className="flex items-center  gap-2">
+        <div className="mt-10 flex items-center justify-center">
+          <div className="flex items-center gap-2">
             <Loader stroke="orange" />
             Загрузка...
           </div>
@@ -84,7 +82,9 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : foundProductsIsLoading
+              !searchValue
+                ? statusProducts === 'pending'
+                : statusFilteredProducts === 'pending'
             }
             visible={displayedProducts?.items?.length !== 0}
           />
@@ -97,7 +97,9 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : foundProductsIsLoading
+              !searchValue
+                ? statusProducts === 'pending'
+                : statusFilteredProducts === 'pending'
             }
             visible={displayedProducts?.items?.length !== 0}
           />

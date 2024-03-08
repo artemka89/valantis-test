@@ -1,28 +1,25 @@
-import { ChangeEvent, FC, useEffect, useState, KeyboardEvent } from 'react';
-import { Input } from '@/shared/ui/input';
-import { X, Search } from 'lucide-react';
+import { ChangeEvent, FC, useState, KeyboardEvent, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FILTER_FIELDS } from '../../constants';
-import { Button } from '@/shared/ui/button';
+import { X, Search } from 'lucide-react';
+import { Button, Input } from '@/shared/ui';
 
 type ProductNameInputType = {
   onSearch: (value: string) => void;
-  getSearchQueryParams: () => {
-    fieldQueryParam: string;
-    searchQueryParam: string;
-  };
 };
 
-export const ProductNameInput: FC<ProductNameInputType> = ({
-  onSearch,
-  getSearchQueryParams,
-}) => {
+export const ProductNameInput: FC<ProductNameInputType> = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState('');
 
-  const { fieldQueryParam, searchQueryParam } = getSearchQueryParams();
-
+  const [searchParams] = useSearchParams();
+  const searchFieldValue = searchParams.get('field');
+  const searchParamValue = searchParams.get('search');
+  
   useEffect(() => {
-    if (searchQueryParam && fieldQueryParam === FILTER_FIELDS.product) {
-      setInputValue(searchQueryParam);
+    if (searchParamValue && searchFieldValue === FILTER_FIELDS.product) {
+      setInputValue(searchParamValue);   
+    } else {
+      setInputValue('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -34,8 +31,8 @@ export const ProductNameInput: FC<ProductNameInputType> = ({
 
   const onEnterInput = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      onSearch(inputValue);      
-    } 
+      onSearch(inputValue);
+    }
   };
 
   const clearInputValue = () => {

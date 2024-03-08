@@ -1,8 +1,8 @@
 {
-  "name": "valantis",
+  "name": "valantis-test",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "module",  
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
