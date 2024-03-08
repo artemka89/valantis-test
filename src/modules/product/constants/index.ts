@@ -1,7 +1,7 @@
 export enum PRODUCT_QUERY_KEYS {
   productIds = 'productIds',
   products = 'products',
-  foundProducts = 'foundProducts',
+  filteredProducts = 'filteredProducts',
   brandFields = 'brandFields',
   prices = 'prices',
 }

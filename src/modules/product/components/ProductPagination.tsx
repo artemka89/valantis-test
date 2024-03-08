@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/shared/ui/pagination';
+} from '@/shared/ui';
 
 type ProductsPaginationProps = {
   setPageNumber: (value: React.SetStateAction<number>) => void;
