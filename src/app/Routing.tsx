@@ -8,8 +8,8 @@ export const Routing = () => {
     <div className="container h-screen">
       <Routes>
         <Route element={<RootLayout />}>
-          <Route path="/" element={<Navigate to={`${ROOT_PATH}products`} replace />} />
-          <Route path={`${ROOT_PATH}products`} element={<Home />} />
+          <Route path="/" element={<Navigate to={`${ROOT_PATH}`} replace />} />
+          <Route path={`${ROOT_PATH}`} element={<Home />} />
           <Route path="/*" element={<div>Страница отсутсвует.</div>} />
         </Route>
       </Routes>
