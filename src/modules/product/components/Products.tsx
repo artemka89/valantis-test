@@ -8,7 +8,7 @@ import { Loader } from '@/shared/ui';
 
 export const Products: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  
   const {
     currentPageNumber,
     setCurrentPageNumber,
@@ -18,20 +18,13 @@ export const Products: FC = () => {
     setAdjustOffset,
   } = useProductContext();
 
-  const {
-    data: products,
-    isSuccess: productsIsSuccess,
-    isPending: productsIsLoading,
-  } = useGetProducts({
-    pageNumber: !searchValue ? currentPageNumber : undefined,
+  const { data: products, status: statusProducts } = useGetProducts({
+    pageNumber: !searchValue ? currentPageNumber : null,
     adjustOffset,
   });
 
-  const {
-    data: filteredProducts,
-    isSuccess: filteredProductsIsSuccess,
-    isPending: filteredProductsIsLoading,
-  } = useGetFilteredProducts(searchValue, filterField);
+  const { data: filteredProducts, status: statusFilteredProducts } =
+    useGetFilteredProducts(searchValue, filterField);
 
   const filteredProductsSlised = filteredProducts?.slice(
     (currentPageNumber - 1) * config.PAGE_SIZE,
@@ -39,12 +32,16 @@ export const Products: FC = () => {
   );
 
   const displayedProducts = searchValue
-    ? { items: filteredProductsSlised, isLoading: filteredProductsIsLoading }
-    : { items: products?.data, isLoading: productsIsLoading };
+    ? {
+        items: filteredProductsSlised,
+        isLoading: statusFilteredProducts === 'pending',
+      }
+    : { items: products?.data, isLoading: statusProducts === 'pending' };
 
   useEffect(() => {
-    if (productsIsSuccess || filteredProductsIsSuccess) setIsLoading(false);
-  }, [productsIsSuccess, filteredProductsIsSuccess]);
+    if (statusProducts === 'success' || statusFilteredProducts === 'success')
+      setIsLoading(false);
+  }, [statusProducts, statusFilteredProducts]);
 
   useEffect(() => {
     const adjustOffset = products?.newOffset;
@@ -72,8 +69,8 @@ export const Products: FC = () => {
     <section className="mb-6">
       <Search />
       {isLoading ? (
-        <div className="flex items-center justify-center">
-          <div className="flex items-center  gap-2">
+        <div className="mt-10 flex items-center justify-center">
+          <div className="flex items-center gap-2">
             <Loader stroke="orange" />
             Загрузка...
           </div>
@@ -85,7 +82,9 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : filteredProductsIsLoading
+              !searchValue
+                ? statusProducts === 'pending'
+                : statusFilteredProducts === 'pending'
             }
             visible={displayedProducts?.items?.length !== 0}
           />
@@ -98,7 +97,9 @@ export const Products: FC = () => {
             pageNumber={currentPageNumber}
             getLastPage={getLastPage}
             isLoading={
-              !searchValue ? productsIsLoading : filteredProductsIsLoading
+              !searchValue
+                ? statusProducts === 'pending'
+                : statusFilteredProducts === 'pending'
             }
             visible={displayedProducts?.items?.length !== 0}
           />

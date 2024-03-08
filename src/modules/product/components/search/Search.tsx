@@ -12,19 +12,16 @@ import {
 } from '@/shared/ui';
 
 export const Search: FC = () => {
-  const { searchValue, setSearchValue, filterField, setFilterField } =
-    useProductContext();
+  const { setSearchValue, filterField, setFilterField } = useProductContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchParamValue = searchParams.get('search');
-  const fieldParamValue = searchParams.get('field');
 
   useEffect(() => {
+    const searchParamValue = searchParams.get('search');
+    const fieldParamValue = searchParams.get('field');
     if (searchParamValue && fieldParamValue) {
       setSearchValue(searchParamValue);
       setFilterField(fieldParamValue as FILTER_FIELDS);
-      console.log(fieldParamValue);
-      console.log(searchValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -33,21 +30,18 @@ export const Search: FC = () => {
     setSearchValue(value);
     if (value) {
       setSearchParams({ field: filterField, search: value });
-    } else setSearchParams('');
+    } else setSearchParams('');  
   };
 
-  const onChangeField = (e: FILTER_FIELDS) => {
-    setFilterField(e);
+  const onChangeFilterField = (field: FILTER_FIELDS) => {
+    setFilterField(field);
     setSearchValue('');
   };
 
   return (
     <div className="flex items-center gap-2 py-4">
       <span className="text-base font-medium">Поиск по:</span>
-      <Select
-        defaultValue={fieldParamValue ?? filterField}
-        onValueChange={onChangeField}
-      >
+      <Select defaultValue={filterField} onValueChange={onChangeFilterField}>
         <SelectTrigger className="w-[95px] text-base font-medium text-orange-600">
           <SelectValue />
         </SelectTrigger>

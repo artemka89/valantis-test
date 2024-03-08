@@ -1,75 +1,110 @@
 import { FC, useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useGetBrands } from '../../api';
 import { FILTER_FIELDS } from '../../constants';
-import { X } from 'lucide-react';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Button,
+  Command,
+  CommandGroup,
+  CommandItem,
   Loader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@/shared/ui';
+import { cn } from '@/shared/lib';
 
 type BrandSelectProps = {
   onSearch: (value: string) => void;
 };
 
 export const BrandSelect: FC<BrandSelectProps> = ({ onSearch }) => {
-  const [selectValue, setSelectValue] = useState('');
-
   const [searchParams] = useSearchParams();
   const searchFieldValue = searchParams.get('field');
   const searchParamValue = searchParams.get('search');
 
-  const navigate = useNavigate();
+  const [selectValue, setSelectValue] = useState('');
+  const [open, setOpen] = useState(false);
 
   const { data, status } = useGetBrands();
 
   useEffect(() => {
     if (searchParamValue && searchFieldValue === FILTER_FIELDS.brand) {
-      setSelectValue(searchParamValue);
-      console.log(selectValue);
+      setSelectValue(searchParamValue);    
+    } else {
+      setSelectValue('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onChangeBrand = (value: string) => {
+  const onChangeSelectValue = (value: string) => {
     setSelectValue(value);
+    setOpen(false);
     onSearch(value);
   };
 
-  const clearBrandValue = () => {
+  const clearSelectValue = () => {
     setSelectValue('');
-    navigate('/');
+    onSearch('');    
   };
 
   return (
     <div className="relative">
-      <Select
-        defaultValue={searchParamValue ? searchParamValue : undefined}
-        onValueChange={onChangeBrand}
-      >
-        <SelectTrigger className="w-[270px] border px-2 text-base font-medium text-neutral-500">
-          <SelectValue placeholder="выберите бренд" />
-        </SelectTrigger>
-        <SelectContent>
-          {status === 'pending' ? (
-            <Loader />
-          ) : (
-            data?.map((brand) => (
-              <SelectItem value={brand} key={brand}>
-                {brand}
-              </SelectItem>
-            ))
-          )}
-        </SelectContent>
-      </Select>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[200px] justify-between"
+          >
+            {selectValue
+              ? data?.find((brand) => brand === selectValue)
+              : 'Выберите бренд...'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandGroup className=" max-h-[300px] overflow-auto">
+              {data?.map((brand) => (
+                <CommandItem
+                  key={brand}
+                  value={brand}
+                  onSelect={() => {
+                    setSelectValue(
+                      brand === selectValue ? '' : brand
+                    );
+                    setOpen(false);
+                    onChangeSelectValue(brand);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      selectValue === brand
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                    )}
+                  />
+                  {brand}
+                </CommandItem>
+              ))}
+              {status === 'pending' && (
+                <>
+                  <Loader stroke="orange" />
+                  Загрузка...
+                </>
+              )}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
       {selectValue && (
         <X
-          onClick={clearBrandValue}
-          className={`absolute right-6 top-3 h-5 w-5 cursor-pointer text-neutral-500`}
+          onClick={clearSelectValue}
+          className={`absolute right-8 top-2.5 h-5 w-5 cursor-pointer text-neutral-500`}
         />
       )}
     </div>

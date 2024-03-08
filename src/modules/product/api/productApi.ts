@@ -9,7 +9,7 @@ export const fetchProducts = async ({
   pageNumber,
   adjustOffset,
 }: {
-  pageNumber: number | undefined;
+  pageNumber: number | null;
   adjustOffset: number;
 }) => {
   if (!pageNumber) return;
@@ -77,29 +77,11 @@ export const fetchBrands = async () => {
 };
 
 export const fetchPrices = async ({ pageParam }: { pageParam: number }) => {
-  const limit = 667;
+  const limit = 200;
   const offset = pageParam * limit;
-  const uniquePrices = await fetchUniquePrices(offset, limit);
-  return [...uniquePrices];
-};
-
-async function fetchUniquePrices(
-  offset: number,
-  limit: number
-): Promise<Set<number>> {
-  const pricesRes = await fetch<number[], string | number>({
+  const prices = await fetch<number[], string | number>({
     action: ACTION_NAMES.getFields,
     params: { field: 'price', offset, limit },
   });
-  if (!pricesRes) {
-    return new Set();
-  }
-  const prices = pricesRes.data.result;
-  const uniquePrices = new Set(prices);
-  if (uniquePrices.size < limit && prices.length !== uniquePrices.size) {
-    const count = limit - uniquePrices.size;
-    const newPrices = await fetchUniquePrices(offset + limit, count);
-    newPrices.forEach((price) => uniquePrices.add(price));
-  }
-  return uniquePrices;
-}
+  return prices.data.result;
+};

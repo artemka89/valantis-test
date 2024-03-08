@@ -14,12 +14,14 @@ export const ProductNameInput: FC<ProductNameInputType> = ({ onSearch }) => {
   const [searchParams] = useSearchParams();
   const searchFieldValue = searchParams.get('field');
   const searchParamValue = searchParams.get('search');
-
+  
   useEffect(() => {
     if (searchParamValue && searchFieldValue === FILTER_FIELDS.product) {
-      setInputValue(searchParamValue);
+      setInputValue(searchParamValue);   
+    } else {
+      setInputValue('');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChangeInput = (event: ChangeEvent<HTMLInputElement>) => {

@@ -35,14 +35,11 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
   const { data, status, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useGetInfinityPrices();
 
-  const uniquePrices = new Set<number>();
-  data?.pages.forEach((page) =>
-    page.forEach((price) => uniquePrices.add(price))
-  );
-
   useEffect(() => {
     if (searchParamValue && searchFieldValue === FILTER_FIELDS.price) {
       setSelectValue(searchParamValue);
+    } else {
+      setSelectValue('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -52,7 +49,13 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
-  const clearInputValue = () => {
+  const onChangeSelectValue = (value: string) => {
+    setSelectValue(value);
+    setOpen(false);
+    onSearch(value);
+  };
+
+  const clearSelectValue = () => {
     setSelectValue('');
     onSearch('');
   };
@@ -68,9 +71,7 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
             className="w-[200px] justify-between"
           >
             {selectValue
-              ? [...uniquePrices].find(
-                  (price) => price.toString() === selectValue
-                )
+              ? data?.find((price) => price.toString() === selectValue)
               : 'Выберите цену...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -78,17 +79,11 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
         <PopoverContent className="w-[200px] p-0">
           <Command>
             <CommandGroup className=" max-h-[300px] overflow-auto">
-              {[...uniquePrices].map((price) => (
+              {data?.map((price) => (
                 <CommandItem
                   key={price}
                   value={price.toString()}
-                  onSelect={(currentValue) => {
-                    setSelectValue(
-                      currentValue === selectValue ? '' : currentValue
-                    );
-                    setOpen(false);
-                    onSearch(currentValue);
-                  }}
+                  onSelect={onChangeSelectValue}
                 >
                   <Check
                     className={cn(
@@ -118,9 +113,9 @@ export const PriceSelect: FC<PriceInputProps> = ({ onSearch }) => {
           </Command>
         </PopoverContent>
       </Popover>
-      {selectValue !== 'Выберите цену...' && (
+      {selectValue && (
         <X
-          onClick={clearInputValue}
+          onClick={clearSelectValue}
           className={`absolute right-8 top-2.5 h-5 w-5 cursor-pointer text-neutral-500`}
         />
       )}

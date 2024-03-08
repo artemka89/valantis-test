@@ -11,9 +11,9 @@ export const useGetProducts = ({
   pageNumber,
   adjustOffset,
 }: {
-  pageNumber: number | undefined;
+  pageNumber: number | null;
   adjustOffset: number;
-}) => {
+}) => { 
   return useQuery({
     queryKey: [PRODUCT_QUERY_KEYS.products, pageNumber],
     queryFn: () => fetchProducts({ pageNumber, adjustOffset }),
@@ -21,21 +21,24 @@ export const useGetProducts = ({
   });
 };
 
-export const useGetFilteredProducts = (value: string, field: string) => {
+export const useGetFilteredProducts = (
+  searchValue: string,
+  searchField: string
+) => {
   let filterParams = {};
-  if (field === FILTER_FIELDS.price) {
-    filterParams = { [FILTER_FIELDS.price]: Number(value) };
+  if (searchField === FILTER_FIELDS.price) {
+    filterParams = { [FILTER_FIELDS.price]: Number(searchValue) };
   }
-  if (field === FILTER_FIELDS.brand) {
-    filterParams = { [FILTER_FIELDS.brand]: value };
+  if (searchField === FILTER_FIELDS.brand) {
+    filterParams = { [FILTER_FIELDS.brand]: searchValue };
   }
-  if (field === FILTER_FIELDS.product) {
-    filterParams = { [FILTER_FIELDS.product]: value };
+  if (searchField === FILTER_FIELDS.product) {
+    filterParams = { [FILTER_FIELDS.product]: searchValue };
   }
   return useQuery({
-    queryKey: [PRODUCT_QUERY_KEYS.filteredProducts, value],
+    queryKey: [PRODUCT_QUERY_KEYS.filteredProducts, searchValue],
     queryFn: () => fetchFilteredProducts<string | number>(filterParams),
-    enabled: !!value,
+    enabled: !!searchValue,
   });
 };
 
@@ -54,6 +57,13 @@ export const useGetInfinityPrices = () => {
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (lastPage.length === 0) return null;
       return lastPageParam + 1;
+    },
+    select: (data) => {
+      const uniquePrices = new Set<number>();
+      data?.pages.forEach((page) =>
+        page.forEach((price) => uniquePrices.add(price))
+      );
+      return [...uniquePrices]
     },
   });
 };
