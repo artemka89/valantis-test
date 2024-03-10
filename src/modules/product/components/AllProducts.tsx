@@ -22,11 +22,11 @@ export const AllProducts: FC = () => {
     }
   }, [data]);
 
-  const isLastPage = data?.data ? data?.data.length < config.PAGE_SIZE : false;
+  const isLastPage = data?.products ? data?.products.length < config.PAGE_SIZE : false;
 
   return (
     <ProductsList
-      products={data?.data}
+      products={data?.products}
       isLoading={status === 'pending'}
       Pagination={() => (
         <ProductsPagination
@@ -34,7 +34,7 @@ export const AllProducts: FC = () => {
           pageNumber={currentPageNumber}
           isLastPage={isLastPage}
           isLoading={status === 'pending'}
-          visible={data?.data.length !== 0}
+          visible={data?.products.length !== 0}
         />
       )}
     />

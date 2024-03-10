@@ -21,7 +21,7 @@ export const fetchProducts = async ({
     params: { ids: [...newIds] },
   });
   const uniqProductRes = uniqBy(products?.data.result, 'id');
-  return { data: uniqProductRes, newAdjustOffset };
+  return { products: uniqProductRes, newAdjustOffset };
 };
 
 async function fetchUniqueIds(
