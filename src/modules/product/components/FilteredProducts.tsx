@@ -8,20 +8,20 @@ import { Loader } from '@/shared/ui';
 export const FilteredProducts: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const {
-    currentPageNumber,
-    setCurrentPageNumber,
-    filterField,
-    searchValue,
-  } = useProductContext();
+  const { currentPageNumber, setCurrentPageNumber, filterField, searchValue } =
+    useProductContext();
 
-  const { data, status } =
-    useGetFilteredProducts(searchValue, filterField);
+  const { data, status } = useGetFilteredProducts(searchValue, filterField);
 
-    const slicedData = data?.slice(
-      (currentPageNumber - 1) * config.PAGE_SIZE,
-      currentPageNumber * config.PAGE_SIZE
-    );  
+  const slicedData = data?.slice(
+    (currentPageNumber - 1) * config.PAGE_SIZE,
+    currentPageNumber * config.PAGE_SIZE
+  );
+
+  useEffect(() => {
+    setCurrentPageNumber(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
 
   useEffect(() => {
     if (status === 'success') setIsLoading(false);
