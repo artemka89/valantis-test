@@ -36,12 +36,14 @@ export const AllProducts: FC = () => {
   };
 
   if (isLoading) {
-    <div className="mt-10 flex items-center justify-center">
-      <div className="flex items-center gap-2">
-        <Loader stroke="orange" />
-        Загрузка...
+    return (
+      <div className="mt-10 flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader stroke="orange" />
+          Загрузка...
+        </div>
       </div>
-    </div>;
+    );
   }
 
   return (
