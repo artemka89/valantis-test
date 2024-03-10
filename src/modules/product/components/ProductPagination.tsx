@@ -54,8 +54,7 @@ export const ProductsPagination: FC<ProductsPaginationProps> = ({
               {pageNumber}
             </PaginationLink>
           </PaginationItem>
-
-          <PaginationItem>{/* <PaginationEllipsis /> */}</PaginationItem>
+                 
           <PaginationItem>
             {isLastPage || isLoading ? (
               <PaginationNext className="text-neutral-400 hover:bg-transparent hover:text-neutral-400" />
