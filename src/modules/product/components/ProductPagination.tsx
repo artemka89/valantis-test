@@ -12,25 +12,24 @@ type ProductsPaginationProps = {
   setPageNumber: (value: React.SetStateAction<number>) => void;
   pageNumber: number;
   isLoading: boolean;
-  getLastPage: () => boolean;
+  isLastPage: boolean;
   visible: boolean;
 };
 
 export const ProductsPagination: FC<ProductsPaginationProps> = ({
   setPageNumber,
   pageNumber,
-  getLastPage,
+  isLastPage,
   isLoading,
   visible,
 }) => {
-  const isLastPage = getLastPage();
 
-  const paginationNPrevLinkHandle = () => {
+  const prevPageHandle = () => {
     setPageNumber((prev) => prev - 1);
     window.scrollTo(0, 0);
   };
 
-  const paginationNextLinkHandle = () => {
+  const nextPageHandle = () => {
     setPageNumber((prev) => prev + 1);
     window.scrollTo(0, 0);
   };
@@ -44,7 +43,7 @@ export const ProductsPagination: FC<ProductsPaginationProps> = ({
               <PaginationPrevious className="text-neutral-400 hover:bg-transparent hover:text-neutral-400" />
             ) : (
               <PaginationPrevious
-                onClick={paginationNPrevLinkHandle}
+                onClick={prevPageHandle}
                 className="cursor-pointer"
               />
             )}
@@ -54,13 +53,13 @@ export const ProductsPagination: FC<ProductsPaginationProps> = ({
               {pageNumber}
             </PaginationLink>
           </PaginationItem>
-                 
+
           <PaginationItem>
             {isLastPage || isLoading ? (
               <PaginationNext className="text-neutral-400 hover:bg-transparent hover:text-neutral-400" />
             ) : (
               <PaginationNext
-                onClick={paginationNextLinkHandle}
+                onClick={nextPageHandle}
                 className="cursor-pointer"
               />
             )}

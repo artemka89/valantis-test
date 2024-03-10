@@ -10,7 +10,7 @@ export const Products: FC = () => {
   return (
     <section className="mb-6">
       <Search />
-      {searchValue ? <FilteredProducts /> :   <AllProducts />}     
+      {searchValue ? <FilteredProducts /> : <AllProducts />}
     </section>
   );
 };
