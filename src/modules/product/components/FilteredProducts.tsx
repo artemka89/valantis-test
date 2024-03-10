@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { useGetFilteredProducts } from '../api';
 import { useProductContext } from '../hooks/useProductContext';
 import { config } from '@/shared/lib';
@@ -6,10 +6,14 @@ import { ProductsList, ProductsPagination } from '.';
 import { Loader } from '@/shared/ui';
 
 export const FilteredProducts: FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  const { currentPageNumber, setCurrentPageNumber, filterField, searchValue } =
-    useProductContext();
+  const {
+    isLoading,
+    setLoading,
+    currentPageNumber,
+    setCurrentPageNumber,
+    filterField,
+    searchValue,
+  } = useProductContext();
 
   const { data, status } = useGetFilteredProducts(searchValue, filterField);
 
@@ -24,8 +28,8 @@ export const FilteredProducts: FC = () => {
   }, [searchValue]);
 
   useEffect(() => {
-    if (status === 'success') setIsLoading(false);
-  }, [status]);
+    if (status === 'success') setLoading(false);
+  }, [status, setLoading]);
 
   const getLastPage = () => {
     return slicedData ? slicedData.length < config.PAGE_SIZE : false;

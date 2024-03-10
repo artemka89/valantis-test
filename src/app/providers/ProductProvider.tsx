@@ -7,12 +7,15 @@ export const ProductProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [isLoading, setLoading] = useState(true);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterField, setFilterField] = useState(FILTER_FIELDS.product);
   const [adjustOffset, setAdjustOffset] = useState(0);
 
- const value = {
+  const value = {
+    isLoading,
+    setLoading,
     currentPageNumber,
     setCurrentPageNumber,
     searchValue,

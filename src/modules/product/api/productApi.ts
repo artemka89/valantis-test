@@ -15,36 +15,36 @@ export const fetchProducts = async ({
   if (!pageNumber) return;
   const limit = config.PAGE_SIZE;
   const offset = (pageNumber - 1) * limit + adjustOffset;
-  const { newIds, newOffset } = await fetchUniqueIds(offset, limit);
+  const { newIds, newAdjustOffset } = await fetchUniqueIds(offset, limit);
   const products = await fetch<IProduct[], UUID[]>({
     action: ACTION_NAMES.getItems,
     params: { ids: [...newIds] },
   });
   const uniqProductRes = uniqBy(products?.data.result, 'id');
-  return { data: uniqProductRes, newOffset };
+  return { data: uniqProductRes, newAdjustOffset };
 };
 
 async function fetchUniqueIds(
   offset: number,
   limit: number
-): Promise<{ newIds: Set<UUID>; newOffset: number }> {
+): Promise<{ newIds: Set<UUID>; newAdjustOffset: number }> {
   const idsRes = await fetch<UUID[], number>({
     action: ACTION_NAMES.getIds,
     params: { offset, limit },
   });
   if (!idsRes) {
-    return { newIds: new Set(), newOffset: 0 };
+    return { newIds: new Set(), newAdjustOffset: 0 };
   }
   const ids = idsRes.data.result;
   const uniqueIds = new Set(ids);
-  let newOffset = 0;
+  let newAdjustOffset = 0;
   if (uniqueIds.size < limit && ids.length !== uniqueIds.size) {
     const count = limit - uniqueIds.size;
     const { newIds } = await fetchUniqueIds(offset + limit, count);
     newIds.forEach((id) => uniqueIds.add(id));
-    newOffset += count;
+    newAdjustOffset += count;
   }
-  return { newIds: uniqueIds, newOffset };
+  return { newIds: uniqueIds, newAdjustOffset };
 }
 
 export const fetchFilteredProducts = async <T>(params: {

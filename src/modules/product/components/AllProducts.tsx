@@ -6,14 +6,10 @@ import { ProductsList, ProductsPagination } from '.';
 import { Loader } from '@/shared/ui';
 
 export const AllProducts: FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [adjustOffset, setAdjustOffset] = useState(0);
 
-  const {
-    currentPageNumber,
-    setCurrentPageNumber,
-    adjustOffset,
-    setAdjustOffset,
-  } = useProductContext();
+  const { isLoading, setLoading, currentPageNumber, setCurrentPageNumber } =
+    useProductContext();
 
   const { data, status } = useGetProducts({
     pageNumber: currentPageNumber,
@@ -21,11 +17,11 @@ export const AllProducts: FC = () => {
   });
 
   useEffect(() => {
-    if (status === 'success') setIsLoading(false);
-  }, [status]);
+    if (status === 'success') setLoading(false);
+  }, [status, setLoading]);
 
   useEffect(() => {
-    const adjustOffset = data?.newOffset;
+    const adjustOffset = data?.newAdjustOffset;
     if (adjustOffset) {
       setAdjustOffset((prev) => prev + adjustOffset);
     } // eslint-disable-next-line react-hooks/exhaustive-deps
